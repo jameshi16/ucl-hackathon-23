@@ -1,0 +1,3 @@
+[pytest11]
+playwright = pytest_playwright.pytest_playwright
+
