@@ -67,12 +67,10 @@ class ChatGPTAPI(Resource):
         topics = [topic.split('.')[1].strip() for topic in topics]
         responses['subtopics'] = topics
 
-        # searchPrompts = chatGPT.ask("Create YouTube search prompts for each of these subtopics, without using \" \".")
-        # searchPrompts = chatGPT.ask("Create one youtube search prompt for each subtopic, ending in " + topic + ", in a numbered list.")
-
         chatGPT.page.close()
 
         subtopics_dict = {}
+        
         # create a list of youtube search prompts by combining the subtopics with the topic
         searchPrompts = []
         for i, subtopic in enumerate(topics):
