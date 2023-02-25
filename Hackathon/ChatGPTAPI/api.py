@@ -12,7 +12,7 @@ api = Api(app)
 def search_youtube(chatgpt_query):
 
     # Replace with your own API key
-    api_key = ''
+    api_key = 'AIzaSyBilb-HHOMen3YcXxGQrLTnBXXsOH5leec'
 
     # Create a YouTube API client
     youtube = googleapiclient.discovery.build(
@@ -50,48 +50,47 @@ class ChatGPTAPI(Resource):
 
         topic = request.args['topic']
         # Format request 
-        query = "Create a numbered list of subtopics  (with no other informtion) required to understand " + topic
+        query = "Create a numbered list of subtopics (with no other informtion) required to understand " + topic
 
         # Get the response from ChatGPT
         response = chatGPT.ask(query)
         topics = response.split('\n')
-        for line in topics:
-            if line.strip() == "" or line[0].isdigit() == False:
-                topics.remove(line)
+        for searchPrompt in topics:
+            if searchPrompt.strip() == "" or searchPrompt[0].isdigit() == False:
+                topics.remove(searchPrompt)
 
-        topics = [topic.split('. ')[1] for topic in topics]
+        topics = [topic for topic in topics if topic.strip() != "" and topic[0].isdigit() == True]
+
+
+        print(topics)
+
+        topics = [topic.split('.')[1].strip() for topic in topics]
         responses['subtopics'] = topics
 
         # searchPrompts = chatGPT.ask("Create YouTube search prompts for each of these subtopics, without using \" \".")
-        searchPrompts = chatGPT.ask("Create one search prompt for each subtopic, ending in " + topic + ", in a numbered list.")
+        # searchPrompts = chatGPT.ask("Create one youtube search prompt for each subtopic, ending in " + topic + ", in a numbered list.")
+
+        chatGPT.page.close()
 
         subtopics_dict = {}
+        # create a list of youtube search prompts by combining the subtopics with the topic
+        searchPrompts = []
+        for i, subtopic in enumerate(topics):
+            searchPrompts.append(subtopic + " " + topic)
+
+        print(searchPrompts)
+
 
         # Split the input string into lines
-        lines = searchPrompts.split('\n')
+        # lines = searchPrompts.split('\n')
 
         # Loop through the lines and extract the subtopic and search term for each one
-        for i, line in enumerate(lines):
-            if line.strip() == "" or line[0].isdigit() == False:
-                continue
-
+        for i, searchPrompt in enumerate(searchPrompts):
             videos = []
 
-            try: 
-                subtopic, search_term = line.split(":")
-            except:
-                try:
-                    subtopic, search_term = line.split("-")
-                except:
-                    try:
-                        subtopic, search_term = line.split(".")
-                    except:
-                        print("Error: Could not split line into subtopic and search term")
-                        continue
+            print(searchPrompt)
 
-            print(search_term)
-
-            videos.append(search_youtube(search_term.strip('"')))
+            videos.append(search_youtube(searchPrompt))
 
             print(videos)
 
