@@ -25,18 +25,22 @@ def search_youtube(chatgpt_query):
     query = urllib.parse.quote_plus(query)
 
     # Search for the video
-    search_response = youtube.search().list(
+    search_responses = youtube.search().list(
         q=query,
         type='video',
         part='id,snippet',
-        maxResults=1
+        maxResults=8
     ).execute()
 
-    video_title = search_response['items'][0]['snippet']['title']
-    video_id = search_response['items'][0]['id']['videoId']
+    results = []
 
-    result = (video_title, video_id)
-    return result
+    for video in search_responses['items']:
+        video_title = video['snippet']['title']
+        video_id = video['id']['videoId']
+        result = (video_title, video_id)
+        results.append(result)
+
+    return results
 
 # This is the class that will get a request with a topic, and return ChatGPT's response
 class ChatGPTAPI(Resource):
@@ -47,11 +51,19 @@ class ChatGPTAPI(Resource):
         topic = request.args['topic']
         # Format request 
         query = "Create a numbered list of subtopics  (with no other informtion) required to understand " + topic
+
         # Get the response from ChatGPT
         response = chatGPT.ask(query)
-        responses['subtopics'] = response
+        topics = response.split('\n')
+        for line in topics:
+            if line.strip() == "" or line[0].isdigit() == False:
+                topics.remove(line)
 
-        searchPrompts = chatGPT.ask("Create YouTube search prompts for each of these subtopics, without using \" \".")
+        topics = [topic.split('. ')[1] for topic in topics]
+        responses['subtopics'] = topics
+
+        # searchPrompts = chatGPT.ask("Create YouTube search prompts for each of these subtopics, without using \" \".")
+        searchPrompts = chatGPT.ask("Create one search prompt for each subtopic, ending in " + topic + ", in a numbered list.")
 
         subtopics_dict = {}
 
@@ -59,9 +71,10 @@ class ChatGPTAPI(Resource):
         lines = searchPrompts.split('\n')
 
         # Loop through the lines and extract the subtopic and search term for each one
-        for line in lines:
+        for i, line in enumerate(lines):
             if line.strip() == "" or line[0].isdigit() == False:
                 continue
+
             videos = []
 
             try: 
@@ -70,14 +83,19 @@ class ChatGPTAPI(Resource):
                 try:
                     subtopic, search_term = line.split("-")
                 except:
-                    print("Error: Could not split line into subtopic and search term")
-                    continue
-            subtopic_num, subtopic_name = subtopic.split(". ")
-            search_terms = search_term.split(',')
-            for term in search_terms:
-                videos.append(search_youtube(term.strip('"')))
+                    try:
+                        subtopic, search_term = line.split(".")
+                    except:
+                        print("Error: Could not split line into subtopic and search term")
+                        continue
 
-            subtopics_dict[subtopic_name] = [videos]
+            print(search_term)
+
+            videos.append(search_youtube(search_term.strip('"')))
+
+            print(videos)
+
+            subtopics_dict[topics[i]] = videos
 
         responses['searchPrompts'] = subtopics_dict
 
