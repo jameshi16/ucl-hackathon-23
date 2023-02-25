@@ -1,0 +1,34 @@
+#header-bar {
+  display: block;
+  width: 100%;
+  height: 1em;
+}
+
+#user-greeting {
+  float: right;
+}
+
+#search-div {
+  text-align: center;
+
+  #search-inner-div {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+#search-bar {
+  width: fit-content;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  * {
+    margin-top: 0.2em;
+  }
+
+  input {
+    width: 25vw;
+  }
+}
