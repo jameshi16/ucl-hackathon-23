@@ -5,7 +5,7 @@ import urllib.parse
 def search_youtube(chatgpt_query):
 
     # Replace with your own API key
-    api_key = 'AIzaSyA0XoYVwJbKdm9noRnGi4n_81ILm7zajCU'
+    api_key = 'your api key'
 
     # Create a YouTube API client
     youtube = googleapiclient.discovery.build(
@@ -25,11 +25,20 @@ def search_youtube(chatgpt_query):
         maxResults=1
     ).execute()
 
-    # Extract the video URL from the search result
-    video_url = 'https://www.youtube.com/watch?v=' + \
-        search_response['items'][0]['id']['videoId']
+    video_title = search_response['items'][0]['snippet']['title']
+    video_id = search_response['items'][0]['id']['videoId']
 
-    return (video_url)
+    result = (video_title, video_id)
+    return result
+
+
+# Create a tuple of (video_title, video_id) and return it
+
+# # Extract the video URL from the search result
+# video_url = 'https://www.youtube.com/watch?v=' + \
+#     search_response['items'][0]['id']['videoId']
+
+# return (video_url)
 
 
 def promtToList(promt):
@@ -48,6 +57,7 @@ def search_multi(querry_lst):
 
 def promtListToUrls(ListofPromts):
     querries = [[]]
+    ListofPromts = ListofPromts.replace("\"", " ")
     for (index, promt) in enumerate(ListofPromts):
         querries.append([])
         promts = promtToList(promt)  # split promt into list of querries
