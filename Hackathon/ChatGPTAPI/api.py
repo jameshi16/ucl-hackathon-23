@@ -2,16 +2,14 @@ from flask import Flask
 from flask_restful import Resource, Api, reqparse
 from chatgpt_wrapper import ChatGPT
 
-import ast
-
 app = Flask(__name__)
 api = Api(app)
 
-chatGPT = ChatGPT()
-
 # This is the class that will get a request with a topic, and return ChatGPT's response
 class ChatGPTAPI(Resource):
-    def post(self):
+    def get(self):
+        chatGPT = ChatGPT()
+        responses = []
         # Get the topic from the request
         parser = reqparse.RequestParser()
         parser.add_argument('topic')
@@ -20,11 +18,13 @@ class ChatGPTAPI(Resource):
         # Format request 
         request = "Create a list of subtopics required to understand " + topic
         # Get the response from ChatGPT
-        response = chatGPT.get_response(topic)
+        response = chatGPT.ask("hello")
+        responses.append(response)
+
         # Return the response
         return response
     
-api.add_resource(ChatGPTAPI, '/chatgpt')
+api.add_resource(ChatGPTAPI, '/chatgptapi')
 
 if __name__ == '__main__':
     app.run()  # run our Flask app
