@@ -12,7 +12,7 @@ api = Api(app)
 def search_youtube(chatgpt_query):
 
     # Replace with your own API key
-    api_key = 'AIzaSyBilb-HHOMen3YcXxGQrLTnBXXsOH5leec'
+    api_key = ''
 
     # Create a YouTube API client
     youtube = googleapiclient.discovery.build(
