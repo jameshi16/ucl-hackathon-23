@@ -7,7 +7,6 @@ import sqlapi
 app = Flask(__name__)
 api = Api(app)
 
-# This is the class that will get a request with a topic, and return ChatGPT's response
 class ChatGPTAPI(Resource):
     def post(self):
         topic = request.args['topic']
@@ -28,11 +27,37 @@ class SavedTopicsAPI(Resource):
 
         # Return the topics
         return topics
+    
+class WatchedAPI(Resource):
+    def post(self):
+        # Get the username and video id from the request
+        username = request.args['username']
+        video_id = request.args['video_id']
+
+        # Add the video to the watched table
+        sqlapi.watched(username,video_id)
+
+        # Return a success message
+        return {'message': 'success'}
+    
+class AuthAPI(Resource):
+    def post(self):
+        # Get the username and password from the request
+        username = request.args['username']
+        password = request.args['password']
+
+        # Check if the username and password are correct
+        if sqlapi.Authenticate(username,password):
+            return {'message': 'success'}
+        else:
+            return {'message': 'failure'}
 
 
 
 api.add_resource(ChatGPTAPI, '/chatgptapi')
 api.add_resource(SavedTopicsAPI, '/user/savedtopicsapi')
+api.add_resource(WatchedAPI, '/user/watchedapi')
+api.add_resource(AuthAPI, '/user/authapi')
 
 if __name__ == '__main__':
     app.run()
