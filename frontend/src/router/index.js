@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "../views/Login.vue";
+import Dashboard from "../views/Dashboard.vue";
+import { useAuthStore } from "../stores/auth";
 import Search from "../views/Search.vue";
 import Topic from "../views/Topic.vue";
 
@@ -21,7 +23,16 @@ const router = createRouter({
             name: "topic",
             component: Topic
         }
+        {
+          path: "/dashboard",
+          name: "dashboard",
+          component: Dashboard,
+        },
     ],
+});
+
+router.beforeEach((to, from) => {
+  if (to.name !== "home" && useAuthStore().logged_in === null) return "/";
 });
 
 export default router;
