@@ -1,4 +1,3 @@
-
 import sqlite3
 from sqlite3 import Error
 
@@ -10,28 +9,20 @@ def create_connection():
         print(e)
     return conn
 
-def authenticate(conn,username,password):
-    cur = conn.cursor()
-    cur.execute("SELECT UserName FROM Accounts WHERE UserName =? AND Password=?",(username,password))
-    return cur.fetchone() != None
-
-def addUser(conn,username,password):
-    cur = conn.cursor()
-    cur.execute("INSERT INTO Accounts(UserName,Password) VALUES(?,?)", (username,password))
-    conn.commit()
-
-#topic: String
-#subtopics: String[] 
-#videoInfos: {String: String[][]}  subtopic is key to a list of lists, 
-def addTopic(conn,topic,subtopics,videoInfos):
-    cur = conn.cursor()
-    cur.execute("INSERT INTO Topics(Topic) VALUES(?)", (topic))
-    conn.commit()
-    TID = cur.rowlastid
-    for subtopic in subtopics:
-        STID = addSubTopic(conn,subtopic,videoInfos[subtopic])
-        addStInT(conn,TID,STID)
-    return TID
+#returns a {Topic: {Subtopic: {String[][]} } }
+'''def VideosFromUser(username):
+    tmp = {}
+    conn = create_connection()
+    topics = TopicsFromUser(conn,username)
+    for topic in topics:
+        tmpd1 = {}
+        subtopics = getSubTopicsFromTopic(conn,topic)
+        for subtopic in subtopics:
+            videos = getLinksFromSubTopic(conn,subtopic)
+            tmpd1[subtopic] = videos
+        tmp[topic] = tmpd1
+    
+    return tmp'''
 
 def addSubTopic(conn,subtopic,videoInfos):
     cur = conn.cursor()
@@ -59,8 +50,7 @@ def addStInT(conn,TID,STID):
     cur.execute("INSERT INTO StInT(TID,STID) VALUES(?)", (TID,STID))
     conn.commit()
 
-
-def UserToTopic(conn,username):
+def TopicsFromUser(conn,username):
     cur = conn.cursor()
     cur.execute(
     "SELECT Topic FROM Topics WHERE TID in "+
@@ -82,7 +72,7 @@ def reformatMResultSet(rs):
     arr = []
     for tuple in rs:
         arr2 = []
-        print(tuple)
+        #print(tuple)
         for elem in tuple:
             arr2.append(elem)
         arr.append(arr2)
@@ -97,7 +87,6 @@ def getLinksFromSubTopic(conn,subtopic):
     ,(subtopic,))
     return reformatMResultSet(cur.fetchall())
 
-
 def getSubTopicsFromTopic(conn,topic):
     cur = conn.cursor()
     cur.execute(
@@ -107,5 +96,57 @@ def getSubTopicsFromTopic(conn,topic):
     ,(topic,))
     return reformatResultSet(cur.fetchall())
 
+##BELOW METHODS ARE ONLY ONES THAT NEED TO BE CALLED EXTERNALLY
+def authenticate(username,password):
+    cur = create_connection().cursor()
+    cur.execute("SELECT UserName FROM Accounts WHERE UserName =? AND Password=?",(username,password))
+    return cur.fetchone() != None
 
-print(getLinksFromSubTopic(create_connection(),"Abstraction"))
+def addUser(username,password):
+    conn = create_connection()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO Accounts(UserName,Password) VALUES(?,?)", (username,password))
+    conn.commit()
+
+def watched(username,id):
+    conn = create_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT LID FROM Links where Link = ?",(id,))
+    LID = cur.fetchone()[0]
+    cur.execute("SELECT AID FROM Accounts where UserName = ?",(username,))
+    AID = cur.fetchone()[0]
+    cur.execute("INSERT INTO Watched(AID,LID) VALUES(?,?)", (AID,LID))
+    conn.commit()
+
+#topic: String
+#subtopics: String[] 
+#videoInfos: {String: String[][]}  subtopic is key to a list of lists, 
+def addTopic(topic,subtopics,videoInfos):
+    conn = create_connection()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO Topics(Topic) VALUES(?)", (topic))
+    conn.commit()
+    TID = cur.rowlastid
+    for subtopic in subtopics:
+        STID = addSubTopic(conn,subtopic,videoInfos[subtopic])
+        addStInT(conn,TID,STID)
+    return TID
+
+def VideosFromUser(username):
+    conn = create_connection()
+    cur = conn.cursor()
+    cur.execute('''
+        SELECT l.Title, l.Link, t.Topic, st.SubTopic
+        FROM Links l
+        JOIN Content c ON c.LID = l.LID
+        JOIN SubTopics st ON st.STID = c.STID
+        JOIN StInT si ON si.STID = st.STID
+        JOIN Topics t ON t.TID = si.TID
+        JOIN Progress p ON p.TID = t.TID
+        JOIN Accounts a ON a.AID = p.AID
+        WHERE a.UserName = 'user' AND l.LID NOT IN (
+        SELECT w.LID FROM Watched w 
+        JOIN Accounts a ON a.AID = w.AID
+        WHERE a.UserName = ?)
+    ''',(username,))
+    return reformatMResultSet(cur.fetchall())

@@ -13,7 +13,6 @@ create table Topics(
 
 drop table if exists Progress;
 create table Progress(
-    PID integer primary key,
     AID integer,
     TID integer,
     foreign key (AID) references Accounts,
@@ -49,6 +48,14 @@ create table Content(
     foreign key (LID) references Links
 );
 
+drop table if exists Watched;
+create table Watched(
+    AID integer,
+    LID integer,
+    foreign key (AID) references Accounts,
+    foreign key (LID) references Links
+);
+
 --Insert Dummy data, Comment out for live test
 Insert into Accounts("UserName","Password") values
 ("user","pass"),
@@ -75,7 +82,7 @@ insert into StInT("TID","STID") values
 (1,2),
 (1,3),
 (2,4),
-(3,5);
+(2,5);
 
 insert into Links("Title","Link") values
 ("Learning Abstraction","56743tyfgh45"),
@@ -95,25 +102,21 @@ insert into Content("STID","LID") values
 (4,6),
 (5,7);
 
+insert into Watched("AID","LID") values
+(1,1),
+(1,7);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+SELECT l.Title, l.Link, t.Topic, st.SubTopic
+FROM Links l
+JOIN Content c ON c.LID = l.LID
+JOIN SubTopics st ON st.STID = c.STID
+JOIN StInT si ON si.STID = st.STID
+JOIN Topics t ON t.TID = si.TID
+JOIN Progress p ON p.TID = t.TID
+JOIN Accounts a ON a.AID = p.AID
+WHERE a.UserName = 'user' AND l.LID NOT IN (
+  SELECT w.LID FROM Watched w 
+  JOIN Accounts a ON a.AID = w.AID
+  WHERE a.UserName = 'user'
+);
 
