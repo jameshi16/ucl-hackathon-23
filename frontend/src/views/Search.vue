@@ -11,9 +11,15 @@
       <h1>What do you want to learn?</h1>
       <div id="search-inner-div">
         <div id="search-bar">
-          <input type="text" />
+          <input
+            v-model="sinput"
+            type="text"
+            placeholder="What do you want to learn?"
+          />
           <div id="search-btn">
-            <button>Teach me senpai</button>
+            <button @click="doSearch" id="search-actual-btn">
+              Teach me senpai
+            </button>
           </div>
         </div>
       </div>
@@ -27,7 +33,13 @@ export default {
   data() {
     return {
       user: "testing",
+      sinput: "",
     };
+  },
+  methods: {
+    doSearch(event) {
+      console.log(this.sinput);
+    },
   },
 };
 </script>
