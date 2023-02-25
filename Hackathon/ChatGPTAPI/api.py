@@ -24,7 +24,7 @@ class ChatGPTAPI(Resource):
         responses['searchPrompts'] = searchPrompts
 
         # Return the response
-        return json.dumps(responses)
+        return responses
     
 api.add_resource(ChatGPTAPI, '/chatgptapi')
 
