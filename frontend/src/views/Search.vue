@@ -1,5 +1,6 @@
 <script setup>
 import "@/assets/search.scss";
+import TopicCard from "./TopicCard.vue";
 </script>
 
 <template>
@@ -22,6 +23,19 @@ import "@/assets/search.scss";
         </div>
       </div>
     </div>
+
+    <div id="in-progress-topics">
+      <h1>Continue your topics</h1>
+      <TopicCard
+        topicName="Object Oriented Programming"
+        :percentage="0.5"
+      ></TopicCard>
+    </div>
+
+    <div id="completed-topics">
+      <h1>Completed Topics</h1>
+      <TopicCard topicName="Abstraction" :percentage="1"></TopicCard>
+    </div>
   </main>
 </template>
 
@@ -36,6 +50,9 @@ export default {
     doSearch(event) {
       console.log(this.sinput);
     },
+  },
+  components: {
+    TopicCard,
   },
 };
 </script>
