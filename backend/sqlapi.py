@@ -150,3 +150,22 @@ def VideosFromUser(username):
         WHERE a.UserName = ?)
     ''',(username,))
     return reformatMResultSet(cur.fetchall())
+
+def TopicBreakdownFromUser(username):
+    response = {}
+    topics = {}
+    conn = create_connection()
+    topicnames = TopicsFromUser(conn,username)
+    response['topicnames'] = topicnames
+    for topic in topicnames:
+        tmpd1 = {}
+        subtopics = getSubTopicsFromTopic(conn,topic)
+        tmpd1['subtopicnames'] = subtopics
+        for subtopic in subtopics:
+            videos = getLinksFromSubTopic(conn,subtopic)
+            tmpd1[subtopic] = videos
+        topics[topic] = tmpd1
+
+    response['topics'] = topics
+    
+    return response
