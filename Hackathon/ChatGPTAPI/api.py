@@ -1,28 +1,33 @@
-from flask import Flask
+from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 from chatgpt_wrapper import ChatGPT
+import re
+import json
 
 app = Flask(__name__)
 api = Api(app)
 
 # This is the class that will get a request with a topic, and return ChatGPT's response
 class ChatGPTAPI(Resource):
-    def get(self):
+    def post(self):
         chatGPT = ChatGPT()
-        responses = []
-        # Get the topic from the request
-        parser = reqparse.RequestParser()
-        parser.add_argument('topic')
-        args = parser.parse_args()
-        topic = args['topic']
+        responses = {}
+
+        topic = request.args['topic']
         # Format request 
-        request = "Create a list of subtopics required to understand " + topic
+        query = "Create a list of subtopics required to understand " + topic
         # Get the response from ChatGPT
-        response = chatGPT.ask("hello")
-        responses.append(response)
+        response = chatGPT.ask(query)
+        responses['subtopics'] = response
+
+        searchPrompts = chatGPT.ask("Create a YouTube search prompt for each of these subtopics, with each prompt inside quotes.")
+        # pattern to match text inside single quotes
+        pattern = r"'(.*?)'"
+        searchPrompts = re.findall(pattern, searchPrompts)
+        responses['searchPrompts'] = searchPrompts
 
         # Return the response
-        return response
+        return json.dumps(responses)
     
 api.add_resource(ChatGPTAPI, '/chatgptapi')
 
