@@ -1,6 +1,6 @@
 <template>
   <main id="login-view">
-    <h1>Hello Wolrd</h1>
+    <h1>Hello World</h1>
     <form id="login-form" onsubmit="return false;">
       <p
         class="error"

@@ -22,17 +22,17 @@ const router = createRouter({
             path: "/topic",
             name: "topic",
             component: Topic
-        }
+        },
         {
-          path: "/dashboard",
-          name: "dashboard",
-          component: Dashboard,
+            path: "/dashboard",
+            name: "dashboard",
+            component: Dashboard,
         },
     ],
 });
 
 router.beforeEach((to, from) => {
-  if (to.name !== "home" && useAuthStore().logged_in === null) return "/";
+    if (to.name !== "home" && useAuthStore().logged_in === null) return "/";
 });
 
 export default router;
