@@ -20,7 +20,7 @@ class ChatGPTAPI(Resource):
         response = chatGPT.ask(query)
         responses['subtopics'] = response
 
-        searchPrompts = chatGPT.ask("Create a YouTube search prompt for each of these subtopics, with each prompt not inside quotes.")
+        searchPrompts = chatGPT.ask("Create a YouTube search prompt for each of these subtopics, without using \" \".")
         responses['searchPrompts'] = searchPrompts
 
         # Return the response
