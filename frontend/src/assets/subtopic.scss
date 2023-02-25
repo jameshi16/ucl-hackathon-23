@@ -1,0 +1,18 @@
+.ex--center-mode {
+  width: 80%;
+  max-width: 100%;
+  margin: auto;
+}
+
+.play-btn {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+
+  img {
+    max-width: 10vw;
+    max-height: 10vw;
+    margin: auto;
+  }
+}

@@ -1,12 +1,10 @@
-<script setup></script>
+<script setup>
+import "@/assets/search.scss";
+</script>
 
 <template>
   <main>
-    <div id="header-bar">
-      <div id="user-greeting">
-        <p>Hi, {{ user }}!</p>
-      </div>
-    </div>
+    <UserGreeting user="test" />
     <div id="search-div">
       <h1>What do you want to learn?</h1>
       <div id="search-inner-div">
@@ -28,11 +26,9 @@
 </template>
 
 <script>
-import "@/assets/search.scss";
 export default {
   data() {
     return {
-      user: "testing",
       sinput: "",
     };
   },
