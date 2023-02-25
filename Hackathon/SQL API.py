@@ -22,30 +22,30 @@ def addUser(conn,username,password):
 
 #topic: String
 #subtopics: String[] 
-#links: {String: String[]}    subtopic is key to a list of links
-def addTopic(conn,topic,subtopics,links):
+#videoInfos: {String: String[][]}  subtopic is key to a list of lists, 
+def addTopic(conn,topic,subtopics,videoInfos):
     cur = conn.cursor()
     cur.execute("INSERT INTO Topics(Topic) VALUES(?)", (topic))
     conn.commit()
     TID = cur.rowlastid
     for subtopic in subtopics:
-        STID = addSubTopic(conn,subtopic,links[subtopic])
+        STID = addSubTopic(conn,subtopic,videoInfos[subtopic])
         addStInT(conn,TID,STID)
     return TID
 
-def addSubTopic(conn,subtopic,links):
+def addSubTopic(conn,subtopic,videoInfos):
     cur = conn.cursor()
     cur.execute("INSERT INTO SubTopics(SubTopic) VALUES(?)", (subtopic))
     conn.commit()
     STID = cur.rowlastid
-    for link in links:
-        LID = addLink(conn,link)
+    for videoInfo in videoInfos:
+        LID = addLink(conn,videoInfo)
         addContent(conn,STID,LID)
     return STID
 
-def addLink(conn,link):
+def addLink(conn,videoInfo):
     cur = conn.cursor()
-    cur.execute("INSERT INTO Links(Link) VALUES(?)", (link))
+    cur.execute("INSERT INTO Links(Title,Link) VALUES(?)", (videoInfo[0],videoInfo[1]))
     conn.commit()
     return cur.lastrowid
 
@@ -70,21 +70,32 @@ def UserToTopic(conn,username):
     ,(username,))
     return reformatResultSet(cur.fetchall())
 
-#1 Result query only (yet)
+#1 Result query only
 def reformatResultSet(rs):
     arr = []
     for tuple in rs:
         arr.append(tuple[0])
     return arr
 
+#Multiple Results per row
+def reformatMResultSet(rs):
+    arr = []
+    for tuple in rs:
+        arr2 = []
+        print(tuple)
+        for elem in tuple:
+            arr2.append(elem)
+        arr.append(arr2)
+    return arr
+
 def getLinksFromSubTopic(conn,subtopic):
     cur = conn.cursor()
     cur.execute(
-    "SELECT Link FROM Links WHERE LID in"+
+    "SELECT Title,Link FROM Links WHERE LID in"+
         "(SELECT LID FROM Content WHERE STID in"+
             "(SELECT STID FROM SubTopics WHERE SubTopic = ?))"
     ,(subtopic,))
-    return reformatResultSet(cur.fetchall())
+    return reformatMResultSet(cur.fetchall())
 
 
 def getSubTopicsFromTopic(conn,topic):
@@ -95,3 +106,6 @@ def getSubTopicsFromTopic(conn,topic):
             "(SELECT TID FROM Topics WHERE Topic = ?))"
     ,(topic,))
     return reformatResultSet(cur.fetchall())
+
+
+print(getLinksFromSubTopic(create_connection(),"Abstraction"))

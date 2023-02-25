@@ -29,6 +29,7 @@ create table SubTopics(
 drop table if exists Links;
 create table Links(
     LID integer primary key,
+    Title varchar(64),
     Link varchar(64)
 );
 
@@ -62,8 +63,37 @@ insert into Progress("AID","TID") values
 (1,2),
 (2,1);
 
-SELECT Topic FROM Topics WHERE TID IN (1,2);
+insert into SubTopics("SubTopic") values
+("Abstraction"),
+("Overloading"),
+("Encapsulation"),
+("Differentiation"),
+("Integration");
 
+insert into StInT("TID","STID") values
+(1,1),
+(1,2),
+(1,3),
+(2,4),
+(3,5);
+
+insert into Links("Title","Link") values
+("Learning Abstraction","56743tyfgh45"),
+("Learning Abstraction 2","16789tyfgh45"),
+("Learning Overloading","45789tyfgh45"),
+("Learning Encapsulation","67894gtyfgh45"),
+("Learning Differentiation","56789t45"),
+("Learning Differentiation 2","567yfgh45"),
+("Learning Integration","56da33rtyfgh45");
+
+insert into Content("STID","LID") values
+(1,1),
+(1,2),
+(2,3),
+(3,4),
+(4,5),
+(4,6),
+(5,7);
 
 
 
