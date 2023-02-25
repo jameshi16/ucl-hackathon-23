@@ -20,10 +20,7 @@ class ChatGPTAPI(Resource):
         response = chatGPT.ask(query)
         responses['subtopics'] = response
 
-        searchPrompts = chatGPT.ask("Create a YouTube search prompt for each of these subtopics, with each prompt inside quotes.")
-        # pattern to match text inside single quotes
-        pattern = r"'(.*?)'"
-        searchPrompts = re.findall(pattern, searchPrompts)
+        searchPrompts = chatGPT.ask("Create a YouTube search prompt for each of these subtopics, with each prompt not inside quotes.")
         responses['searchPrompts'] = searchPrompts
 
         # Return the response
