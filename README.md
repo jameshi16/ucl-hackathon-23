@@ -3,6 +3,20 @@
 This project contains the code for the CSS Hackathon 2023 - Engineers are Superheros.
 The project was conceived, built, and showcased within a 26 hour limit from 5 February to 6 February.
 
+In the advent of AIs like ChatGPT, a revolution in learning paradigm is bound to take place. This project
+takes any topic from a curious learner, generates a syllabus for that, and find videos to furnish the
+syllabus.
+
+Upon completing all the videos in each item in the syllabus, they are awarded a community-granted certificate
+to prove their worth.
+
+These certificates may mean nothing now, but can become a recognized qualification in the future. With a critical
+mass, this technology can be affordable and accessible to anyone who may require an alternative to expensive
+tertiary education.
+
+Educators can use the tool to create higher-level courses; one that does not rely on low level understanding,
+but high level application. Low level learning can be outsourced to this tool.
+
 The collaborators are:
 - @jameshi16
 - @Gen1Code
