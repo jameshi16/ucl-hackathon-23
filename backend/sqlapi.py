@@ -151,6 +151,23 @@ def VideosFromUser(username):
     ''',(username,))
     return reformatMResultSet(cur.fetchall())
 
+# Returns true if a video has been watched by a user
+def isWatched(username,link):
+    conn = create_connection()
+    cur = conn.cursor()
+    cur.execute('''
+        SELECT l.Title, l.Link, t.Topic, st.SubTopic
+        FROM Links l
+        JOIN Content c ON c.LID = l.LID
+        JOIN SubTopics st ON st.STID = c.STID
+        JOIN StInT si ON si.STID = st.STID
+        JOIN Topics t ON t.TID = si.TID
+        JOIN Progress p ON p.TID = t.TID
+        JOIN Accounts a ON a.AID = p.AID
+        WHERE a.UserName = ? AND l.Link = ?
+    ''',(username,link))
+    return cur.fetchone() != None
+
 def TopicBreakdownFromUser(username):
     response = {}
     topics = {}
@@ -159,11 +176,18 @@ def TopicBreakdownFromUser(username):
     response['topicnames'] = topicnames
     for topic in topicnames:
         tmpd1 = {}
+        tmpd2 = {}
         subtopics = getSubTopicsFromTopic(conn,topic)
         tmpd1['subtopicnames'] = subtopics
         for subtopic in subtopics:
             videos = getLinksFromSubTopic(conn,subtopic)
-            tmpd1[subtopic] = videos
+            print(videos)
+            tmpd2 = {}
+            for video in videos:
+                tmpd2['videoId'] = video[1]
+                tmpd2['watched'] = isWatched(username,video[1])
+            tmpd1[subtopic] = tmpd2
+            
         topics[topic] = tmpd1
 
     response['topics'] = topics

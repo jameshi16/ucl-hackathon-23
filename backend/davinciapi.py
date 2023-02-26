@@ -1,10 +1,12 @@
-from chatgpt_wrapper import ChatGPT
+import openai
 import googleapiclient.discovery
 import sqlapi
 import urllib.parse
 import re
 import json
 import config
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def search_youtube(chatgpt_query):
 
@@ -40,12 +42,20 @@ def search_youtube(chatgpt_query):
     return results
     
 def CreateSyllabus(topic):
-    chatGPT = ChatGPT()
     responses = {}
 
     query = "Create a numbered list of subtopics (with no other informtion) required to understand " + topic
 
-    response = chatGPT.ask(query)
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=query,
+        temperature=0.7,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    
     topics = response.split('\n')
     for searchPrompt in topics:
         if searchPrompt.strip() == "" or searchPrompt[0].isdigit() == False:
