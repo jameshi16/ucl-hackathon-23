@@ -173,10 +173,10 @@ def isWatched(username,link):
     cur = conn.cursor()
     cur.execute('''
     select LID from Watched where AID = (
-        select AID from Accounts where UserName = "?"
+        select AID from Accounts where UserName = ?
     ) and LID = (
-        select LID from Links where Link = "?"
-    )''',(username,link))
+        select LID from Links where Link = ?
+    )''',(username,link,))
     return cur.fetchone() != None
 
 def TopicBreakdownFromUser(username):
