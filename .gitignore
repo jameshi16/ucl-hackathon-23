@@ -42,3 +42,6 @@ pyvenv.cfg
 pip-selfcheck.json
 config.py
 __pycache__/
+
+# Env files
+.env
