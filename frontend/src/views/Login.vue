@@ -18,14 +18,13 @@
 <script>
 import { mapWritableState } from "pinia";
 import { useAuthStore } from "@/stores/auth";
-import router from "../router/index.js";
 
 export default {
   methods: {
     login() {
       if (this.username === "ollie" && this.password === "password") {
         this.logged_in = this.username;
-        router.push("/dashboard");
+        this.$router.push("/search");
       } else {
         this.err_login_failed = true;
       }

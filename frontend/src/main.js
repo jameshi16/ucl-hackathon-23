@@ -11,9 +11,9 @@ import "./assets/main.scss";
 const app = createApp(App);
 const pinia = createPinia();
 
-app.use(router)
+app.use(router);
 app.use(pinia);
-app.use(VueCryptojs)
+app.use(VueCryptojs);
 
 app.component('UserGreeting', UserGreeting);
 

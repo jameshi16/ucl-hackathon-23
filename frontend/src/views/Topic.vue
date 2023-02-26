@@ -4,15 +4,19 @@ import SubTopic from "./SubTopic.vue";
 
 <template>
   <main>
-    <UserGreeting user="test" />
-    <h1>Topic Name</h1>
-    <div>
-      <div class="subtopics">
-        <div v-for="subtopic in mockSubTopics" class="subtopic">
-          <SubTopic
-            :subtopicName="subtopic.subtopicName"
-            :videos="subtopic.videos"
-          ></SubTopic>
+    <div class="vl-parent">
+      <UserGreeting user="test" />
+      <h1>{{ selectedTopic.name }}</h1>
+      <div>
+        <div class="subtopics">
+          <div v-for="subtopic in selectedTopic.subtopics" class="subtopic">
+            <SubTopic
+              :subtopicName="subtopic.name"
+              :videos="subtopic.videos"
+              :percentage="subtopic.percentage"
+              @watched="setWatched"
+            ></SubTopic>
+          </div>
         </div>
       </div>
     </div>
@@ -20,27 +24,31 @@ import SubTopic from "./SubTopic.vue";
 </template>
 
 <script>
+import { mapState, mapStores } from "pinia";
+import { useTopicsStore } from "@/stores/topics";
+
 export default {
   data() {
-    return {
-      mockSubTopics: [
-        {
-          subtopicName: "Subtopic 1",
-          videos: [
-            {
-              title: "bad apple",
-              videoId: "9lNZ_Rnr7Jc",
-            },
-            {
-              title: "bad apple 2",
-              videoId: "9lNZ_Rnr7Jc",
-            },
-          ],
-        },
-      ],
-    };
+    return {};
   },
   components: { SubTopic },
-  methods: {},
+  methods: {
+    setWatched(video) {
+      this.topicsStore.setWatched(undefined, video.videoId);
+      this.checkUserDone();
+    },
+    checkUserDone() {
+      if (this.userIsDone) {
+        this.$router.push("/search");
+      }
+    },
+  },
+  computed: {
+    ...mapState(useTopicsStore, ["selectedTopic"]),
+    ...mapStores(useTopicsStore),
+    userIsDone() {
+      return this.selectedTopic.percentage >= 1;
+    },
+  },
 };
 </script>

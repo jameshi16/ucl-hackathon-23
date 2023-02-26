@@ -48,34 +48,45 @@ import playpng from "@/assets/play.png";
 <script>
 import { VueperSlides, VueperSlide } from "vueperslides";
 export default {
-  props: ["subtopicName", "videos"],
+  props: ["subtopicName", "videos", "percentage"],
   data() {
     return {
-      percentageDone: 1.0,
+      percentageDone: this.percentage,
       currentIndex: 0,
-      currentTitle: this.videos[0]["title"],
-      noMoreVideos: this.videos.length == 0,
-      slides: this.videos.map((video) => {
-        return {
-          title: video["title"],
-          image:
-            "https://i.ytimg.com/vi/" + video["videoId"] + "/maxresdefault.jpg",
-          link: "https://www.youtube.com/watch?v=" + video["videoId"],
-        };
-      }),
+      currentTitle: "",
+      noMoreVideos: false,
+      slides: [],
     };
+  },
+  mounted() {
+    this.currentTitle = this.onlyWatched[0]["title"];
+    this.noMoreVideos = this.onlyWatched.length == 0;
+    this.slides = this.onlyWatched.map((video) => {
+      return {
+        title: video["title"],
+        image:
+          "https://i.ytimg.com/vi/" + video["videoId"] + "/maxresdefault.jpg",
+        link: "https://www.youtube.com/watch?v=" + video["videoId"],
+      };
+    });
   },
   components: { VueperSlides, VueperSlide },
   methods: {
     changeSlide(event) {
       this.currentIndex = event.currentSlide.index;
-      this.currentTitle = this.videos[this.currentIndex].title;
+      this.currentTitle = this.onlyWatched[this.currentIndex].title;
     },
     finishWatching(event) {
+      this.$emit("watched", this.onlyWatched[this.currentIndex]);
       this.slides.pop(this.currentIndex);
       if (this.slides.length == 0) {
         this.noMoreVideos = true;
       }
+    },
+  },
+  computed: {
+    onlyWatched() {
+      return this.videos.filter((video) => !video.watched);
     },
   },
 };
