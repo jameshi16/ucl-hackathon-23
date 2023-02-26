@@ -168,20 +168,12 @@ def isWatched(username,link):
     conn = create_connection()
     cur = conn.cursor()
     cur.execute('''
-        SELECT l.Title, l.Link, t.Topic, st.SubTopic
-        FROM Links l
-        JOIN Content c ON c.LID = l.LID
-        JOIN SubTopics st ON st.STID = c.STID
-        JOIN StInT si ON si.STID = st.STID
-        JOIN Topics t ON t.TID = si.TID
-        JOIN Progress p ON p.TID = t.TID
-        JOIN Accounts a ON a.AID = p.AID
-        WHERE a.UserName = ? AND l.Link = ? AND l.LID NOT IN (
-        SELECT w.LID FROM Watched w 
-        JOIN Accounts a ON a.AID = w.AID
-        WHERE a.UserName = ?)
-    ''',(username,link,username))
-    return cur.fetchone() == None
+    select LID from Watched where AID = (
+        select AID from Accounts where UserName = "?"
+    ) and LID = (
+        select LID from Links where Link = "?"
+    )''',(username,link))
+    return cur.fetchone() != None
 
 def TopicBreakdownFromUser(username):
     response = {}
