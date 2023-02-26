@@ -29,9 +29,7 @@ def addSubTopic(conn,subtopic,videoInfos):
     cur.execute("INSERT INTO SubTopics(SubTopic) VALUES(?)", (subtopic,))
     conn.commit()
     STID = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
-    print(videoInfos)
     for videoInfo in videoInfos[0]:
-        print(videoInfo)
         LID = addLink(conn,videoInfo)
         addContent(conn,STID,LID)
     return STID
@@ -44,8 +42,6 @@ def addLink(conn,videoInfo):
 
 def addContent(conn,STID,LID):
     cur = conn.cursor()
-    print(STID)
-    print(LID)
     cur.execute("INSERT INTO Content(STID,LID) VALUES(?,?)", (STID,LID))
     conn.commit()
 
@@ -128,7 +124,6 @@ def watched(username,id):
 def addTopic(topic,subtopics,videoInfos):
     conn = create_connection()
     cur = conn.cursor()
-    print(topic)
     cur.execute("INSERT INTO Topics(Topic) VALUES(?)", (topic,))
     conn.commit()
     TID = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
