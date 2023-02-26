@@ -11,19 +11,19 @@ import "vue-loading-overlay/dist/css/index.css";
       :height="128"
       :width="128"
       :opacity="1.0"
-      background-color="pink"
+      background-color="black"
     />
-    <h1>Hello World</h1>
+    <h1>LearnFaster</h1>
     <form id="login-form" onsubmit="return false;">
+      <input type="text" v-model="username" placeholder="Username" />
+      <input type="password" v-model="password" placeholder="Password" />
+      <button @click="login">Login</button>
       <p
         class="error"
         :style="{ visibility: err_login_failed ? 'visible' : 'hidden' }"
       >
         Error: invalid username or password
       </p>
-      <input type="text" v-model="username" placeholder="Username" />
-      <input type="password" v-model="password" placeholder="Password" />
-      <button @click="login">Login</button>
     </form>
   </main>
 </template>
@@ -48,11 +48,11 @@ export default {
             this.logged_in = this.username;
             this.$router.push("/search");
           } else {
-            this.error_login_failed = true;
+            this.err_login_failed = true;
           }
         })
         .catch(() => {
-          this.error_login_failed = true;
+          this.err_login_failed = true;
         })
         .finally(() => {
           this.isLoading = false;
@@ -63,6 +63,8 @@ export default {
     return {
       err_login_failed: false,
       isLoading: false,
+      username: "",
+      password: "",
     };
   },
   computed: {
