@@ -6,12 +6,12 @@ import re
 import json
 import config
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = config.openai_api_key
 
 def search_youtube(chatgpt_query):
 
     # Replace with your own API key
-    api_key = config.api_key
+    api_key = config.youtube_api_key
 
     # Create a YouTube API client
     youtube = googleapiclient.discovery.build(
@@ -55,8 +55,8 @@ def CreateSyllabus(topic):
         frequency_penalty=0,
         presence_penalty=0
     )
-    
-    topics = response.split('\n')
+
+    topics = response.choices[0].text.split('\n')
     for searchPrompt in topics:
         if searchPrompt.strip() == "" or searchPrompt[0].isdigit() == False:
             topics.remove(searchPrompt)

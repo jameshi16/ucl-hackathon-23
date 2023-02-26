@@ -9,7 +9,7 @@ import config
 def search_youtube(chatgpt_query):
 
     # Replace with your own API key
-    api_key = config.api_key
+    api_key = config.youtube_api_key
 
     # Create a YouTube API client
     youtube = googleapiclient.discovery.build(

@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 
 import chatgptapi
-# import davinciapi
+import davinciapi
 import sqlapi
 
 app = Flask(__name__)
@@ -18,15 +18,15 @@ class ChatGPTAPI(Resource):
         # Return the response
         return response
     
-# class DavinciAPI(Resource):
-#     def post(self):
-#         topic = request.args['topic']
+class DavinciAPI(Resource):
+    def post(self):
+        topic = request.args['topic']
 
-#         # Get the response from Davinci
-#         response = davinciapi.CreateSyllabus(topic)
+        # Get the response from Davinci
+        response = davinciapi.CreateSyllabus(topic)
 
-#         # Return the response
-#         return response
+        # Return the response
+        return response
 
 class SavedTopicsAPI(Resource):
     def post(self):
@@ -66,7 +66,7 @@ class AuthAPI(Resource):
 
 
 api.add_resource(ChatGPTAPI, '/chatgptapi')
-# api.add_resource(DavinciAPI, '/davinciapi')
+api.add_resource(DavinciAPI, '/davinciapi')
 api.add_resource(SavedTopicsAPI, '/user/savedtopicsapi')
 api.add_resource(WatchedAPI, '/user/watchedapi')
 api.add_resource(AuthAPI, '/user/authapi')
