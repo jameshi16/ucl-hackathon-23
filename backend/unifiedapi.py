@@ -3,6 +3,7 @@ from flask_restful import Resource, Api, reqparse
 
 import chatgptapi
 import davinciapi
+import mockapi
 import sqlapi
 
 app = Flask(__name__)
@@ -32,6 +33,23 @@ class DavinciAPI(Resource):
 
         # Get the response from Davinci
         response = davinciapi.CreateSyllabus(topic)
+
+        # Add the topic to the database
+        sqlapi.addTopic(topic,response['subtopics'],response['searchPrompts'])
+
+        # Add the topic to the user's saved topics
+        sqlapi.UserToTopic(username,topic)
+
+        # Return the response
+        return response
+
+class MockAPI(Resource):
+    def post(self):
+        username = request.args['username']
+        topic = request.args['topic']
+
+        # Get the response from Mock
+        response = mockapi.CreateSyllabus(topic)
 
         # Add the topic to the database
         sqlapi.addTopic(topic,response['subtopics'],response['searchPrompts'])
