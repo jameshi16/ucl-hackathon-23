@@ -1,5 +1,6 @@
 from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
+from flask_cors import CORS
 
 import chatgptapi
 import davinciapi
@@ -7,6 +8,7 @@ import mockapi
 import sqlapi
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 
 class ChatGPTAPI(Resource):
@@ -99,6 +101,7 @@ class AuthAPI(Resource):
 
 api.add_resource(ChatGPTAPI, '/chatgptapi')
 api.add_resource(DavinciAPI, '/davinciapi')
+api.add_resource(MockAPI, '/mockapi')
 api.add_resource(SavedTopicsAPI, '/user/savedtopicsapi')
 api.add_resource(WatchedAPI, '/user/watchedapi')
 api.add_resource(AuthAPI, '/user/authapi')

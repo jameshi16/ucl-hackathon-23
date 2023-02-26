@@ -59,7 +59,9 @@ export default {
     };
   },
   mounted() {
-    this.currentTitle = this.onlyWatched[0]["title"];
+    if (this.onlyWatched.length > 0) {
+      this.currentTitle = this.onlyWatched[0]["title"];
+    }
     this.noMoreVideos = this.onlyWatched.length == 0;
     this.slides = this.onlyWatched.map((video) => {
       return {

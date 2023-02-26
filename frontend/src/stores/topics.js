@@ -3,80 +3,19 @@ import { defineStore } from "pinia";
 export const useTopicsStore = defineStore("topics", {
     state: () => ({ topics: [], selectedTopic: {} }),
     actions: {
-        fetchTopicsFromUser(username) {
-            const exampleOutput =
-            {
-                "topicnames": [
-                    "Object-Oriented Programming",
-                    "Calculus"
-                ],
-                "topics": {
-                    "Object-Oriented Programming": {
-                        "subtopicnames": [
-                            "Abstraction",
-                            "Overloading",
-                            "Encapsulation"
-                        ],
-                        "Abstraction": {
-                            "Learning Abstraction": {
-                                "videoId": "56743tyfgh45",
-                                "watched": true
-                            },
-                            "Learning Abstraction 2": {
-                                "videoId": "16789tyfgh45",
-                                "watched": false
-                            }
-                        },
-                        "Overloading": {
-                            "Learning Overloading": {
-                                "videoId": "45789tyfgh45",
-                                "watched": false
-                            }
-                        },
-                        "Encapsulation": {
-                            "Learning Encapsulation": {
-                                "videoId": "67894gtyfgh45",
-                                "watched": false
-                            }
-                        }
-                    },
-                    "Calculus": {
-                        "subtopicnames": [
-                            "Differentiation",
-                            "Integration"
-                        ],
-                        "Differentiation": {
-                            "Learning Differentiation": {
-                                "videoId": "56789t45",
-                                "watched": false
-                            },
-                            "Learning Differentiation 2": {
-                                "videoId": "567yfgh45",
-                                "watched": true
-                            }
-                        },
-                        "Integration": {
-                            "Learning Integration": {
-                                "videoId": "56da33rtyfgh45",
-                                "watched": true
-                            }
-                        }
-                    }
-                }
-            };
-
+        reformatFromServer(output) {
             // refashion output to something we understand
             let listBuilder = [];
-            exampleOutput.topicnames.forEach(name => {
+            output.topicnames.forEach(name => {
                 let objectBuilder = {};
                 let totalWatched = 0;
                 let totalVideos = 0;
                 objectBuilder['name'] = name;
                 objectBuilder['subtopics'] = []
-                let subtopics = exampleOutput['topics'][name].subtopicnames;
+                let subtopics = output['topics'][name].subtopicnames;
 
                 subtopics.forEach(subtopicname => {
-                    let videos = exampleOutput['topics'][name][subtopicname];
+                    let videos = output['topics'][name][subtopicname];
                     let watched = 0;
                     let newVideos = Object.keys(videos).map(video => {
                         let newDict = {};
@@ -99,13 +38,13 @@ export const useTopicsStore = defineStore("topics", {
                 });
                 listBuilder.push(objectBuilder);
             });
-            this.topics = listBuilder;
+            return listBuilder;
         },
-        setWatched(username, linkId) {
-            // TODO: make call to set linkID as watched
-            // TODO: should call backend again to fetch all the data again
-
-            // NOTE: frontend implementation because i'm lazy
+        updateTopicsFromResponse(response) {
+            this.topics = this.reformatFromServer(response.data);
+        },
+        setWatched(linkId) {
+            // NOTE: frontend implementation to look smooth
             this.topics.forEach(topic => (
                 topic.subtopics.forEach(subtopic => (
                     subtopic['videos'].forEach(video => {

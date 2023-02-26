@@ -45,12 +45,12 @@ curl -X POST http://127.0.0.1:5000/user/savedtopicsapi?username=user
 
 CURL command to mark a video as watched:
 ```
-curl -X POST http://127.0.0.1:5000/user/savedtopicsapi?username=user\&video_id
+curl -X POST http://127.0.0.1:5000/user/watchedapi?username=user\&video_id=something
 ```
 
 CURL command to log a user in:
 ```
-curl -X POST http://127.0.0.1:5000/user/savedtopicsapi?username=user\&password=password
+curl -X POST http://127.0.0.1:5000/user/authapi?username=user\&password=password
 ```
 
 ## Frontend
@@ -61,3 +61,5 @@ Install the relevant packages and run the server:
 npm install \
 npm run dev
 ```
+
+If another API (between DaVinci, ChatGPT and Mock) is chosen / backend URL is changed, please change the corresponding values in app.js.

@@ -1,5 +1,18 @@
+<script setup>
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
+</script>
+
 <template>
   <main id="login-view">
+    <loading
+      v-model:active="isLoading"
+      :is-full-page="fullPage"
+      :height="128"
+      :width="128"
+      :opacity="1.0"
+      background-color="pink"
+    />
     <h1>Hello World</h1>
     <form id="login-form" onsubmit="return false;">
       <p
@@ -22,17 +35,34 @@ import { useAuthStore } from "@/stores/auth";
 export default {
   methods: {
     login() {
-      if (this.username === "ollie" && this.password === "password") {
-        this.logged_in = this.username;
-        this.$router.push("/search");
-      } else {
-        this.err_login_failed = true;
-      }
+      this.isLoading = true;
+      this.$http
+        .post(this.$backendUrl + "user/authapi", null, {
+          params: {
+            username: this.username,
+            password: this.password,
+          },
+        })
+        .then((response) => {
+          if (response.data["message"] == "success") {
+            this.logged_in = this.username;
+            this.$router.push("/search");
+          } else {
+            this.error_login_failed = true;
+          }
+        })
+        .catch(() => {
+          this.error_login_failed = true;
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
     },
   },
   data() {
     return {
       err_login_failed: false,
+      isLoading: false,
     };
   },
   computed: {

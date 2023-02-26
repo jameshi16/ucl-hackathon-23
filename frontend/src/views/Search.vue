@@ -78,16 +78,38 @@ export default {
   },
   methods: {
     doSearch(event) {
-      console.log(this.sinput);
       this.isLoading = true;
-      // TODO: do something here
-      this.isLoading = false;
+      this.$http
+        .post(this.$backendUrl + this.$apiChoice, null, {
+          params: {
+            username: this.logged_in,
+            topic: this.sinput,
+          },
+        })
+        .then(() => {
+          this.$nextTick(() => {
+            this.getData(this.logged_in);
+          });
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
     },
     getData(username) {
-      // TODO: replace with actual call to backend
       this.isLoading = true;
-      this.topicsStore.fetchTopicsFromUser(username);
-      this.isLoading = false;
+      this.$http
+        .post(this.$backendUrl + "user/savedtopicsapi", null, {
+          params: {
+            username: this.logged_in,
+          },
+        })
+        .then((response) => {
+          this.topics.$state =
+            this.topicsStore.updateTopicsFromResponse(response);
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
     },
     onClickContinue(id) {
       this.selectedTopic = this.incompleteTopics[id];

@@ -14,6 +14,7 @@ import SubTopic from "./SubTopic.vue";
               :subtopicName="subtopic.name"
               :videos="subtopic.videos"
               :percentage="subtopic.percentage"
+              :key="refreshSubtopics"
               @watched="setWatched"
             ></SubTopic>
           </div>
@@ -25,16 +26,26 @@ import SubTopic from "./SubTopic.vue";
 
 <script>
 import { mapState, mapStores } from "pinia";
+import { useAuthStore } from "@/stores/auth";
 import { useTopicsStore } from "@/stores/topics";
 
 export default {
   data() {
-    return {};
+    return { refreshSubtopics: false };
   },
   components: { SubTopic },
   methods: {
     setWatched(video) {
-      this.topicsStore.setWatched(undefined, video.videoId);
+      this.$http.post(this.$backendUrl + "user/watchedapi", null, {
+        params: {
+          username: this.logged_in,
+          video_id: video.videoId,
+        },
+      }),
+        this.topicsStore.setWatched(video.videoId);
+      this.$nextTick(() => {
+        this.refreshSubtopics = !this.refreshSubtopics;
+      });
       this.checkUserDone();
     },
     checkUserDone() {
@@ -44,6 +55,7 @@ export default {
     },
   },
   computed: {
+    ...mapState(useAuthStore, ["logged_in"]),
     ...mapState(useTopicsStore, ["selectedTopic"]),
     ...mapStores(useTopicsStore),
     userIsDone() {
