@@ -44,8 +44,9 @@ def CreateSyllabus(topic):
     responses = {}
 
     query = "Create a numbered list of subtopics (with no other informtion) required to understand " + topic
-
     response = chatGPT.ask(query)
+    chatGPT.page.close()
+
     topics = response.split('\n')
     for searchPrompt in topics:
         if searchPrompt.strip() == "" or searchPrompt[0].isdigit() == False:
