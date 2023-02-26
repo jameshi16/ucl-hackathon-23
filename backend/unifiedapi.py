@@ -47,7 +47,7 @@ class AuthAPI(Resource):
         password = request.args['password']
 
         # Check if the username and password are correct
-        if sqlapi.Authenticate(username,password):
+        if sqlapi.authenticate(username,password):
             return {'message': 'success'}
         else:
             return {'message': 'failure'}
