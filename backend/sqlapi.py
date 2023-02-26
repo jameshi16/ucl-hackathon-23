@@ -36,9 +36,13 @@ def addSubTopic(conn,subtopic,videoInfos):
 
 def addLink(conn,videoInfo):
     cur = conn.cursor()
-    cur.execute("INSERT INTO Links(Title,Link) VALUES(?,?)", (videoInfo[0],videoInfo[1]))
-    conn.commit()
-    return cur.lastrowid
+    cur.execute("SELECT LID FROM Links where Link = ?", (videoInfo[1],))
+    tmp = cur.fetchone()
+    if  tmp == None:
+        cur.execute("INSERT INTO Links(Title,Link) VALUES(?,?)", (videoInfo[0],videoInfo[1]))
+        conn.commit()
+        return cur.lastrowid
+    return tmp[0]
 
 def addContent(conn,STID,LID):
     cur = conn.cursor()
