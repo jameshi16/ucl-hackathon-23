@@ -10,20 +10,34 @@ api = Api(app)
 
 class ChatGPTAPI(Resource):
     def post(self):
+        username = request.args['username']
         topic = request.args['topic']
 
         # Get the response from ChatGPT
         response = chatgptapi.CreateSyllabus(topic)
+
+        # Add the topic to the database
+        sqlapi.addTopic(topic,response['subtopics'],response['searchPrompts'])
+
+        # Add the topic to the user's saved topics
+        sqlapi.UserToTopic(username,topic)
 
         # Return the response
         return response
     
 class DavinciAPI(Resource):
     def post(self):
+        username = request.args['username']
         topic = request.args['topic']
 
         # Get the response from Davinci
         response = davinciapi.CreateSyllabus(topic)
+
+        # Add the topic to the database
+        sqlapi.addTopic(topic,response['subtopics'],response['searchPrompts'])
+
+        # Add the topic to the user's saved topics
+        sqlapi.UserToTopic(username,topic)
 
         # Return the response
         return response

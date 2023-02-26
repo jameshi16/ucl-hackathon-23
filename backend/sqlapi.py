@@ -26,28 +26,32 @@ def create_connection():
 
 def addSubTopic(conn,subtopic,videoInfos):
     cur = conn.cursor()
-    cur.execute("INSERT INTO SubTopics(SubTopic) VALUES(?)", (subtopic))
+    cur.execute("INSERT INTO SubTopics(SubTopic) VALUES(?)", (subtopic,))
     conn.commit()
-    STID = cur.rowlastid
-    for videoInfo in videoInfos:
+    STID = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+    print(videoInfos)
+    for videoInfo in videoInfos[0]:
+        print(videoInfo)
         LID = addLink(conn,videoInfo)
         addContent(conn,STID,LID)
     return STID
 
 def addLink(conn,videoInfo):
     cur = conn.cursor()
-    cur.execute("INSERT INTO Links(Title,Link) VALUES(?)", (videoInfo[0],videoInfo[1]))
+    cur.execute("INSERT INTO Links(Title,Link) VALUES(?,?)", (videoInfo[0],videoInfo[1]))
     conn.commit()
     return cur.lastrowid
 
 def addContent(conn,STID,LID):
     cur = conn.cursor()
-    cur.execute("INSERT INTO Content(STID,LID) VALUES(?)", (STID,LID))
+    print(STID)
+    print(LID)
+    cur.execute("INSERT INTO Content(STID,LID) VALUES(?,?)", (STID,LID))
     conn.commit()
 
 def addStInT(conn,TID,STID):
     cur = conn.cursor()
-    cur.execute("INSERT INTO StInT(TID,STID) VALUES(?)", (TID,STID))
+    cur.execute("INSERT INTO StInT(TID,STID) VALUES(?,?)", (TID,STID))
     conn.commit()
 
 def TopicsFromUser(conn,username):
@@ -124,13 +128,26 @@ def watched(username,id):
 def addTopic(topic,subtopics,videoInfos):
     conn = create_connection()
     cur = conn.cursor()
-    cur.execute("INSERT INTO Topics(Topic) VALUES(?)", (topic))
+    print(topic)
+    cur.execute("INSERT INTO Topics(Topic) VALUES(?)", (topic,))
     conn.commit()
-    TID = cur.rowlastid
+    TID = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+
     for subtopic in subtopics:
         STID = addSubTopic(conn,subtopic,videoInfos[subtopic])
         addStInT(conn,TID,STID)
     return TID
+
+# Link user to topic
+def UserToTopic(username,topic):
+    conn = create_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT TID FROM Topics WHERE Topic = ?",(topic,))
+    TID = cur.fetchone()[0]
+    cur.execute("SELECT AID FROM Accounts WHERE UserName = ?",(username,))
+    AID = cur.fetchone()[0]
+    cur.execute("INSERT INTO Progress(AID,TID) VALUES(?,?)", (AID,TID))
+    conn.commit()
 
 def VideosFromUser(username):
     conn = create_connection()
