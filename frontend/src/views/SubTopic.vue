@@ -35,7 +35,9 @@ import playpng from "@/assets/play.png";
         </vueper-slides>
         <div v-show="!noMoreVideos" class="activeSlide">
           <p>Video Title: {{ currentTitle }}</p>
-          <button @click="finishWatching($event)">Finish Watching</button>
+          <button class="finish-watching" @click="finishWatching($event)">
+            Finish Watching
+          </button>
         </div>
       </div>
       <div v-show="noMoreVideos">

@@ -131,3 +131,30 @@ div.completed-card {
     padding: 12px;
   }
 }
+
+div.vl-parent {
+  text-align: center;
+  button.finish-watching {
+    background-color: steelblue;
+    color: white;
+    padding: 12px;
+    border: none;
+  }
+
+  h2 {
+    margin: 0;
+  }
+}
+
+div.activeSlide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  p {
+    margin: 0;
+    margin-right: 20px;
+  }
+
+  padding-bottom: 15px;
+}
