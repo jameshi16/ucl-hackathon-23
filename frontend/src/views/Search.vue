@@ -7,7 +7,7 @@ import "vue-loading-overlay/dist/css/index.css";
 </script>
 
 <template>
-  <main>
+  <main id="dashboard">
     <div class="vl-parent">
       <loading
         v-model:active="isLoading"
@@ -15,48 +15,49 @@ import "vue-loading-overlay/dist/css/index.css";
         :height="128"
         :width="128"
         :opacity="1.0"
-        background-color="pink"
+        background-color="white"
       />
       <UserGreeting :user="logged_in" />
-      <div id="search-div">
-        <h1>What do you want to learn?</h1>
-        <div id="search-inner-div">
-          <div id="search-bar">
-            <input
-              v-model="sinput"
-              type="text"
-              placeholder="What do you want to learn?"
-            />
-            <div id="search-btn">
-              <button @click="doSearch" id="search-actual-btn">
-                Teach me senpai
-              </button>
-            </div>
-          </div>
+    </div>
+
+    <div class="dashboard-cont">
+      <section id="search">
+        <h1>Start a New Journey</h1>
+        <form id="search-cont" onsubmit="return false;">
+          <button @click="doSearch">Search</button>
+          <input
+            type="text"
+            placeholder="What do you want to learn?"
+            v-model="sinput"
+          />
+        </form>
+      </section>
+
+      <section v-if="incompleteTopics.length !== 0" id="in-progress">
+        <h1>Continue Learning</h1>
+        <div class="topic-cont">
+          <TopicCard
+            v-for="(topic, i) in incompleteTopics"
+            :topicName="topic.name"
+            :id="i"
+            :percentage="topic.percentage"
+            @triggerClick="onClickContinue"
+          ></TopicCard>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <div id="in-progress-topics">
-      <h1>Continue your topics</h1>
-      <TopicCard
-        v-for="(topic, i) in incompleteTopics"
-        :topicName="topic.name"
-        :id="i"
-        :percentage="topic.percentage"
-        @triggerClick="onClickContinue"
-      ></TopicCard>
-    </div>
-
-    <div id="completed-topics">
-      <h1>Completed Topics</h1>
-      <TopicCard
-        v-for="(topic, i) in completeTopics"
-        :topicName="topic.name"
-        :id="i"
-        :percentage="topic.percentage"
-        @triggerClick="onClickContinue"
-      ></TopicCard>
+      <section v-if="completeTopics.length !== 0" id="completed">
+        <h1>Completed Topics</h1>
+        <div class="topic-cont">
+          <TopicCard
+            v-for="(topic, i) in completeTopics"
+            :topicName="topic.name"
+            :id="i"
+            :percentage="topic.percentage"
+            @triggerClick="onClickContinue"
+          ></TopicCard>
+        </div>
+      </section>
     </div>
   </main>
 </template>

@@ -1,24 +1,40 @@
-#search-div {
-  text-align: center;
-
-  #search-inner-div {
-    display: flex;
-    justify-content: center;
+div.dashboard-cont {
+  section {
     width: 100%;
+
+    h1 {
+      text-align: center;
+      font-size: 3em;
+    }
   }
-}
+  section#search {
+    width: 100%;
+    text-align: center;
 
-#search-bar {
-  width: fit-content;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
+    form#search-cont {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-  * {
-    margin-top: 0.2em;
-  }
+      button {
+        background-color: steelblue;
+        color: white;
+        border: 1px dashed white;
+        width: 5%;
+        cursor: pointer;
+        padding: 15px 0;
+      }
 
-  input {
-    width: 25vw;
+      input {
+        width: 45%;
+        text-align: center;
+        color: white;
+        background-color: rgba(0, 0, 0, 0);
+        border: 1px dashed white;
+        border-left: none;
+        padding: 15px 0;
+      }
+    }
   }
 }

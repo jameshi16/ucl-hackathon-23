@@ -1,17 +1,17 @@
 <script setup></script>
 
 <template>
-  <main>
+  <div class="topic-card">
     <h2>{{ topicName }}</h2>
     <div v-show="percentage < 1" class="completed-card">
       <p>Percentage complete: {{ percentage * 100 }}%</p>
-      <button @click="$emit('triggerClick', id)">Continue now</button>
+      <button @click="$emit('triggerClick', id)">Continue Now</button>
     </div>
     <div v-show="percentage == 1" class="inprogress-card">
       <p>Completed!</p>
       <p>Certification:{{ certificateID }}</p>
     </div>
-  </main>
+  </div>
 </template>
 
 <script>
